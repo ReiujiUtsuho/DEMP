@@ -1,0 +1,7 @@
+FROM php:fpm-alpine
+RUN curl -sS -m 7 https://www.cloudflare.com/cdn-cgi/trace | grep -i loc=cn \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+    && echo -e "user = root\ngroup = root" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && docker-php-ext-install -j$(nproc) pdo_mysql
+CMD ["php-fpm", "-R"]

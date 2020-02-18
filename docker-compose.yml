@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: blog_nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./www/:/var/www/html/:rw
+      - ./ssl/:/var/www/ssl/:ro
+      - ./conf/typecho.conf:/etc/nginx/conf.d/typecho.conf:ro
+    restart: always
+    depends_on:
+      - fpm
+      # - mysql
+
+  fpm:
+    image: php-fpm:mysql
+    build:
+      context: .
+      dockerfile: Dockerfile-fpm
+    container_name: blog_fpm
+    expose:
+      - 9000
+    volumes:
+      - ./www/:/var/www/html/:rw
+      # - ./log/php-fpm/:/var/log/php-fpm/:rw
+    restart: always
+
+  mysql:
+    image: mysql:latest
+    container_name: blog_db
+    expose:
+      - 3306
+    volumes:
+      - ./db:/var/lib/mysql/:rw
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=yadomin.moe
+      - MYSQL_DATABASE=typecho
+      - MYSQL_USER=typecho
+      - MYSQL_PASSWORD=yadom.in
