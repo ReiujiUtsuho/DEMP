@@ -1,4 +1,4 @@
-# DNMP
+# DEMP
 Dockerized Nginx MySQL PHP (for Typecho)
 
 ## How to use
